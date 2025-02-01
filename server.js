@@ -44,7 +44,7 @@ app.get('/auth/github', async (req, res) => {
     const githubUsername = userResponse.data.login;
 
     // Step 3: Redirect the user back to the extension with access token and username
-    const redirectUrl = `chrome-extension://pklkphgccjdmimlphbkmkhmnmlnnjlkj/oauth-callback.html?access_token=${accessToken}&github_username=${githubUsername}`;
+    const redirectUrl = `chrome-extension://pklkphgccjdmimlphbkmkhmnmlnnjlkj/oauth/callback.html?access_token=${accessToken}&github_username=${githubUsername}`;
     res.redirect(redirectUrl); // Redirect the user to the Chrome extension's callback page
   } catch (error) {
     console.error('Error during OAuth flow:', error);
