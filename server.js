@@ -5,22 +5,20 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json());
+
 // GitHub OAuth credentials from environment variables
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
-app.use(express.json());
-
-// GitHub OAuth callback route
-app.get('/auth/github', async (req, res) => {
-  const { code } = req.query;
-
+// OAuth endpoint for exchanging code for token, using POST
+app.post('/auth/github', async (req, res) => {
+  const { code } = req.body;
   if (!code) {
     return res.status(400).json({ error: 'Authorization code is missing' });
   }
-
   try {
-    // Step 1: Exchange the code for an access token
+    // Exchange code for an access token
     const tokenResponse = await axios.post(
       'https://github.com/login/oauth/access_token',
       {
@@ -30,24 +28,21 @@ app.get('/auth/github', async (req, res) => {
       },
       { headers: { Accept: 'application/json' } }
     );
-
     const accessToken = tokenResponse.data.access_token;
     if (!accessToken) {
       return res.status(400).json({ error: 'Failed to get access token' });
     }
-
-    // Step 2: Fetch GitHub user info using the access token
+    // Retrieve GitHub user info using the access token
     const userResponse = await axios.get('https://api.github.com/user', {
       headers: { Authorization: `token ${accessToken}` },
     });
-
     const githubUsername = userResponse.data.login;
-
-    // Step 3: Redirect the user back to the extension with access token and username
-    const redirectUrl = `chrome-extension://pklkphgccjdmimlphbkmkhmnmlnnjlkj/oauth/callback.html?access_token=${accessToken}&github_username=${githubUsername}`;
-    res.redirect(redirectUrl); // Redirect the user to the Chrome extension's callback page
+    res.json({ access_token: accessToken, github_username: githubUsername });
   } catch (error) {
-    console.error('Error during OAuth flow:', error);
+    console.error(
+      'Error during OAuth flow:',
+      error.response ? error.response.data : error.message
+    );
     res
       .status(500)
       .json({ error: 'Internal Server Error', details: error.message });
