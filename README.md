@@ -64,7 +64,7 @@ SolveSync Backend is responsible for handling OAuth authentication with GitHub a
     ```
 
 ### Deployment URL
-Once deployed, your backend will be available at `https://solvesync-backend.onrender.com`.
+Once deployed, your backend will be available at `https://yourname.onrender.com`.
 
 ### License
 This project is licensed under the MIT License.
