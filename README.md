@@ -18,7 +18,7 @@ SolveSync Backend is responsible for handling OAuth authentication with GitHub a
 1. Clone the repository:
     ```bash
     git clone https://github.com/art2url/solve-sync-oauth-server.git
-    cd SolveSync-Backend
+    cd solve-sync-oauth-server
     ```
 
 2. Install dependencies:
